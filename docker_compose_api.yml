@@ -28,6 +28,36 @@ services:
       - POSTGRES_DB=$POSTGRES_DB
     volumes:
       - postgres-db:/var/lib/postgresql/data
+    ports:
+        - "5432:5432"
+
+  mysql-service:
+    image: mysql/mysql-server:8.0.32
+    command: [ "--default-authentication-plugin=mysql_native_password" ]
+    container_name: mysql
+    environment:
+      MYSQL_RmysqlOOT_PASSWORD: $DATABASE_PASSWORD
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: $POSTGRES_DB
+    volumes:
+        - /var/lib/mysql
+    ports:
+        - "3307:3307"
+  adminer-service:
+    image: adminer:latest
+    restart: unless-stopped
+    container_name: adminer
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+  mailsender:
+    image: mailhog/mailhog
+    restart: unless-stopped
+    container_name: mail_sender
+    ports:
+      - "8025:8025"
+      - "1025:1025"
 
 volumes:
   postgres-db:

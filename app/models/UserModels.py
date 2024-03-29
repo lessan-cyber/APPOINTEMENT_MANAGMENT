@@ -4,6 +4,8 @@ from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from app.database import Base
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import Boolean, Column, String, UUID
+from uuid import uuid4
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
@@ -15,6 +17,12 @@ class User(Base):
     modified = Column(DateTime, server_default=text('now()'))
     is_active = Column(Boolean, default=True)
     appointment = relationship("Appointment", back_populates="owner")
+    verification_code = Column(String, default=str(uuid4()))
+    is_verified = Column(Boolean, default=False)
+
+    def __repr__(self):
+        return f"<User {self.email}>"
+
     # Hash password
     def set_password(self, password):
         self.password = generate_password_hash(password)

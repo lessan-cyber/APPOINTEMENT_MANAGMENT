@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-#from app.route import user_routes, team_routes, appointment_routes, permission_routes
+from app.router import UserRoutes
 
 app = FastAPI()
 #
-# app.include_router(userRoute.router)
+app.include_router(UserRoutes.router)
 # app.include_router(team_routes.router)
 # app.include_router(appointment_routes.router)
 # app.include_router(permission_routes.router)

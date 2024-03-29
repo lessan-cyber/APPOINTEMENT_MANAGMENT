@@ -1,25 +1,20 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker,declarative_base
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
-# load environment variables
-from dotenv import load_dotenv
-import os
-load_dotenv()
-settings = {
-    'database_username': os.getenv('DATABASE_USERNAME'),
-    'database_password': os.getenv('DATABASE_PASSWORD'),
-    'database_hostname': os.getenv('database_hostname'),
-    'database_port': os.getenv('DATABASE_PORT'),
-    'database_name': os.getenv('database_name')
-}
+from app.config import settings
 
-SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}'
-
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+#SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}'
+#SQLALCHEMY_DATABASE_URL = f'postgresql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}'
+SQLALCHEMY_DATABASE_URL = f'mysql+pymysql://{settings.DATABASE_USERNAME}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOSTNAME}:{settings.DATABASE_PORT}/{settings.DATABASE_NAME}'
+engine = create_engine(SQLALCHEMY_DATABASE_URL,
+                       pool_pre_ping=True,
+                       pool_recycle=3600,
+                       pool_size=20,
+                       max_overflow=0,
+                       echo=True)
+#engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -35,12 +30,12 @@ def get_db():
 
 
 # while True:
-
+#
 #     try:
-#         conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres',
-#                                 password='password123', cursor_factory=RealDictCursor)
+#         conn = psycopg2.connect(host=settings.DATABASE_HOSTNAME, database=settings.DATABASE_NAME, user=settings.DATABASE_USERNAME,
+#                                 password=settings.DATABASE_PASSWORD, cursor_factory=RealDictCursor)
 #         cursor = conn.cursor()
-#         print("Database connection was succesfull!")
+#         print("Database connection was succesfull BABY!")
 #         break
 #     except Exception as error:
 #         print("Connecting to database failed")
