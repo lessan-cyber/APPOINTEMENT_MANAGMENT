@@ -12,12 +12,12 @@ class User(Base):
     name = Column(String(60), index=True)
     email = Column(String(120), unique=True, index=True)
     password = Column(String(255))
-    role = Column(String(10), default="member")
+    role = Column(String(10), default="member"),
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()')),
     modified = Column(DateTime, server_default=text('now()'))
-    is_active = Column(Boolean, default=True)
-    appointment = relationship("Appointment", back_populates="owner")
-    verification_code = Column(String, default=str(uuid4()))
+    is_active = Column(Boolean, default=True),
+    appointment = relationship("Appointment", back_populates="owner"),
+    verification_code = Column(String(150), default=str(uuid4()))
     is_verified = Column(Boolean, default=False)
 
     def __repr__(self):

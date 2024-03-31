@@ -6,3 +6,6 @@ import hashlib
 
 def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
+
+def verify_token_validity(valid_token:str, token:str) -> bool:
+    return valid_token == hash_token(token)

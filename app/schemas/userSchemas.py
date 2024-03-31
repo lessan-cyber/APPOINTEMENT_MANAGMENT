@@ -22,8 +22,11 @@ class UserGet(UserBase):
     modified: Optional[datetime] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
+class VerifyUserRequest(BaseModel):
+    token: str
+    email: EmailStr
 
 class UserOut(BaseModel):
     id: int
@@ -31,4 +34,4 @@ class UserOut(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
