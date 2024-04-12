@@ -1,6 +1,9 @@
 from fastapi import BackgroundTasks,HTTPException
+from app.models.UserModels import User
+from fastapi import BackgroundTasks,HTTPException
 from app.config import settings, send_email
 from app.models.UserModels import User
+from app.models.TeamModels import Invitation, Team
 from app.utils.utils import hash_token, getRandomCode, verify_token_validity
 
 
@@ -55,3 +58,30 @@ async def activate_user_account(data, session, background_tasks):
     await account_confirmation_email(user, background_tasks)
     return user
 
+# ... existing code ...
+
+async def send_team_invitation_email(invitation: list, background_tasks, team_name:str,invitation_id: int):
+    accept_url = f"{settings.APP_URL}/teams/invitations/{invitation_id}/accept"
+    data = {
+        "team_name": team_name,
+        "accept_url": accept_url,
+        "app_name": settings.APPLICATION_NANE,
+        "name": invitation,
+
+    }
+    subject = f"Invitation to join {team_name}"
+    await send_email(recipients=invitation,
+                     subject=subject,
+                     template_name="team_invitation.html",
+                     background_tasks=background_tasks,
+                     context=data)
+
+
+
+async def send_test_email(email, background_tasks):
+    print("sending email")
+    await send_email(recipients= email,
+                     subject="Test email",
+                     template_name="test.html",
+                     background_tasks=background_tasks,
+                     context={})

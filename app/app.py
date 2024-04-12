@@ -1,12 +1,13 @@
 from fastapi import FastAPI
-from app.router import UserRoutes
+from app.router import UserRoutes, TeamRoutes
 from app.database import Base, engine
 
 
 
-app = FastAPI()
+app = FastAPI(debug=True)
 #
 app.include_router(UserRoutes.router)
+app.include_router(TeamRoutes.router)
 # app.include_router(team_routes.router)
 # app.include_router(appointment_routes.router)
 # app.include_router(permission_routes.router)
