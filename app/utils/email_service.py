@@ -44,33 +44,31 @@ async def activate_user_account(data, session, background_tasks):
     user = session.query(User).filter_by(email=data.email).first()
     if not user:
         raise HTTPException(status_code=400, detail="Tis link is invalid")
-    token = hash_token(user.verification_code)
-    try:
-        verify_token_validity(token, data.token)
-    except Exception as e:
+
+    if hash_token(user.verification_code) != data.token:
         raise HTTPException(status_code=400, detail="This link in expired or invalid")
     user.is_active = True
     user.is_verified = True
     session.add(user)
     session.commit()
     session.refresh(user)
-    # inform the user that his account has been activated
+    # inform the users that his account has been activated
     await account_confirmation_email(user, background_tasks)
     return user
 
 # ... existing code ...
 
-async def send_team_invitation_email(invitation: list, background_tasks, team_name:str,invitation_id: int):
-    accept_url = f"{settings.APP_URL}/teams/invitations/{invitation_id}/accept"
+async def send_team_invitation_email(email: str, background_tasks, team_name:str,code:str):
+    #accept_url = f"{settings.APP_URL}/teams/invitations/{invitation_id}/accept"
     data = {
         "team_name": team_name,
-        "accept_url": accept_url,
+        "code": code,
         "app_name": settings.APPLICATION_NANE,
-        "name": invitation,
-
+        # extract the name from the email
+        "name": email.split("@")[0],
     }
     subject = f"Invitation to join {team_name}"
-    await send_email(recipients=invitation,
+    await send_email(recipients=[email],
                      subject=subject,
                      template_name="team_invitation.html",
                      background_tasks=background_tasks,
@@ -80,7 +78,7 @@ async def send_team_invitation_email(invitation: list, background_tasks, team_na
 
 async def send_test_email(email, background_tasks):
     print("sending email")
-    await send_email(recipients= email,
+    await send_email(recipients=email,
                      subject="Test email",
                      template_name="test.html",
                      background_tasks=background_tasks,

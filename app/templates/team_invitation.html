@@ -31,12 +31,8 @@
     <div class="container">
         <h2>Welcome, {{app_name}}!</h2>
         <p>Hi {{ name }},</p>
-        <p>You have been invited to join the team {{ team_name }}. Please click the link below to accept the invitation.</p>
-                <p>
-            <a href="{{accept_url}}" target="_blank" class="button">Accept Invitation</a>
-        </p>
-        <p>If the button above doesn't work, you can also copy and paste the following link into your web browser:</p>
-        <p><a href="{{accept_url}}">Accept Invitation</a></p>
+        <p>You have been invited to join the team {{ team_name }}. Please type the code below to accept the invitation.</p>
+                <p> your code is : {{ code }}</p>
         <p>Thank you for choosing us!</p>
         <p>Best Regards,<br>{{ app_name }}</p>
     </div>

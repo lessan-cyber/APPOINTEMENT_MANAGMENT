@@ -22,6 +22,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     # appointment = relationship("Appointment", back_populates="owner")
     verification_code = Column(String(150), default=str(uuid4()))
+    user_appointments = relationship("UserAppointment", back_populates="users")
     is_verified = Column(Boolean, default=False)
     tokens = relationship("TokenModel", back_populates="user")
     teams = relationship(

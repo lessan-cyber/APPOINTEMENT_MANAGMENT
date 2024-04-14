@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, status, HTTPException, Depends
+from fastapi import APIRouter, BackgroundTasks, status, HTTPException, Depends, Query
 from app.schemas.userSchemas import UserCreate, VerifyUserRequest,Token
 from fastapi.responses import JSONResponse
 from app.utils.email_service import send_account_verfication_email, activate_user_account
@@ -36,21 +36,24 @@ async def create_user(user: UserCreate, background_tasks: BackgroundTasks, db: S
     db.commit()
     db.refresh(new_user)
     await send_account_verfication_email(new_user, background_tasks=background_tasks)
-    return {"user": new_user,
+    return {"users": new_user,
             "message": "un message de verification vient d'etre envoyé à votre adresse mail"}
 
 
-@router.post("/verify", status_code=status.HTTP_200_OK)
-async def verify_user_account(data: VerifyUserRequest, background_tasks: BackgroundTasks,
-                              session: Session = Depends(get_db)):
+# @router.post("/verify", status_code=status.HTTP_200_OK)
+# async def verify_user_account(data: VerifyUserRequest, background_tasks: BackgroundTasks, session: Session = Depends(get_db)):
+#     await activate_user_account(data, session, background_tasks)
+#     return JSONResponse({"message": "Votre compte a été activé avec succès",
+#                          "status": status.HTTP_200_OK})
+
+
+
+@router.get("/verify", status_code=status.HTTP_200_OK)
+async def verify_user_account(background_tasks: BackgroundTasks, session: Session = Depends(get_db), token: str = Query(...), email: str = Query(...)):
+    data = VerifyUserRequest(token=token, email=email)
     await activate_user_account(data, session, background_tasks)
-    return JSONResponse({"message": "Account is activated successfully."})
-
-
-# @router.post("/login")
-# async def login_user():
-#     pass
-
+    return JSONResponse({"message": "Votre compte a été activé avec succès",
+                         "status": status.HTTP_200_OK})
 
 @router.post("/token", response_model=Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -92,7 +95,7 @@ def refresh_access_token(refresh_token: str = Depends(oauth2_scheme), db: Sessio
         raise HTTPException(status_code=403, detail="Token is revoked or not found")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": token_model.user.email}, expires_delta=access_token_expires
+        data={"sub": token_model.users.email}, expires_delta=access_token_expires
     )
     token_model.access_token = access_token
     token_model.expires_at = datetime.now() + access_token_expires
@@ -103,3 +106,18 @@ def refresh_access_token(refresh_token: str = Depends(oauth2_scheme), db: Sessio
 @router.get("/me")
 def read_current_user(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     return current_user
+
+@router.delete("/me")
+def delete_current_user(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    db.delete(current_user)
+    db.commit()
+    return {"message": "User deleted successfully"}
+
+@router.post("/logout")
+async def logout_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    token_model = db.query(TokenModel).filter(TokenModel.access_token == token).first()
+    if token_model is None:
+        raise HTTPException(status_code=404, detail="Token not found")
+    token_model.revoked = True
+    db.commit()
+    return {"message": "Token revoked"}

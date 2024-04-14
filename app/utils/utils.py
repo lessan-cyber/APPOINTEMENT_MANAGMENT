@@ -1,8 +1,11 @@
 import random
+from datetime import datetime
 from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 def getRandomCode():
-    return random.randint(1000, 99999)
+    listChar = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    return ''.join(random.choices(listChar, k=6))
 
 import hashlib
 
@@ -10,8 +13,7 @@ def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
 def verify_token_validity(valid_token:str, token:str) -> bool:
-    return valid_token == hash_token(token)
-
+    return valid_token == token
 # app/utils/password_utils.py
 
 
@@ -34,3 +36,4 @@ def display_members(members: list):
         all_members.append(memberInfo)
 
     return all_members
+
