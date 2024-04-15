@@ -83,3 +83,20 @@ async def send_test_email(email, background_tasks):
                      template_name="test.html",
                      background_tasks=background_tasks,
                      context={})
+
+
+async def send_notification_for_appointment(user: User,  background_tasks: BackgroundTasks, appointment):
+    data = {
+        "app_name": settings.APPLICATION_NANE,
+        "name": user.name,
+        "appointment_name": appointment.name,
+        "appointment_description": appointment.description,
+        "start_time": appointment.start_time,
+        "appointment_title": appointment.title
+    }
+    subject = f"Appointment Reminder"
+    await send_email(recipients=[user.email],
+                     subject="Appointment Reminder",
+                     template_name="appointment_notification.html",
+                     background_tasks=background_tasks,
+                     context=data )

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Appointment Reminder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .appointment-details {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .appointment-details td, .appointment-details th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .appointment-details th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Appointment Reminder</h1>
+    <p>Dear {{ name }},</p>
+    <p>This is a reminder for your upcoming appointment.</p>
+    <table class="appointment-details">
+        <tr>
+            <th>Appointment Name</th>
+            <td>{{ appointment_name }}</td>
+        </tr>
+        <tr>
+            <th>Appointment Description</th>
+            <td>{{ appointment_description }}</td>
+        </tr>
+        <tr>
+            <th>Start Time</th>
+            <td>{{ start_time }}</td>
+        </tr>
+        <tr>
+            <th>Appointment Title</th>
+            <td>{{ appointment_title }}</td>
+        </tr>
+    </table>
+    <p>Thank you,</p>
+    <p>{{ app_name }}</p>
+</body>
+</html>
