@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.router import UserRoutes, TeamRoutes,AppointmentRoutes
 from app.database import Base, engine
-https://code-with-me.global.jetbrains.com/xMK2cyVuT9aV6qn6PpuDOw#p=PY&fp=88472F15F25BA4FC077457CE9462056FD2848AC9B2047A8FD46933DB0BEE4481&newUi=true
+
 
 
 app = FastAPI(debug=True)
