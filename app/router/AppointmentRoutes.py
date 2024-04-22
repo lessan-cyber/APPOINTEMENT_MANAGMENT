@@ -5,6 +5,7 @@ from app.models.UserModels import User
 from app.models.TeamModels import Team,user_team_association
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
+from datetime import date
 from app.utils.security import get_current_user
 from app.schemas.appoitementShemas import UserAppointmentCreate, UserAppointmentUpdate,TeamAppointmentCreate,TeamAppointmentUpdate
 router = APIRouter(
